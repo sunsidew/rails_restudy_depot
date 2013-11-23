@@ -64,7 +64,12 @@ class ProductsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_product
-      @product = Product.find(params[:id])
+      begin
+        @product = Product.find(params[:id])
+      rescue ActiveRecord::RecordNotFound
+        logger.error "잘못된 품목에 접근을 시도했습니다. #{params[:id]}"
+        redirect_to store_url, notice: '잘못된 품목'
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
